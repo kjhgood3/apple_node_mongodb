@@ -12,13 +12,36 @@
     <h1>할 일 리스트</h1>
     <hr />
     <% for(var i=0; i < posts.length; i++) { %>
-        <h3>할일 : <%= posts[i].title %>
-        </h3>
-        <p>날짜 : <%= posts[i].date %>
-        </p>
-        <button>삭제</button>
-        <hr />
+        <div>
+            <p>글번호 : <%= posts[i]._id %>
+            </p>
+            <h3>할일 : <%= posts[i].title %>
+            </h3>
+            <p>날짜 : <%= posts[i].date %>
+            </p>
+            <button class="delete" data-id="<%= posts[i]._id %>">삭제</button>
+            <hr />
+        </div>
         <% } %>
+
+            <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+            <script>
+                $('.delete').click(function (e) {      // 화살표함수로 하면 안되고 function(e)로 해야 this동작함
+                    var postNo = e.target.dataset.id;  //e.target은 내가 지금 누른 요소!! dataset.id는 data-id라고 저장한 값을 가져온다.
+                    var nowButton = $(this); //this는 지금 이벤트 동작하는 곳!
+                    // console.log(nowButton);
+                    $.ajax({
+                        method: 'DELETE',  // DELETE요청
+                        url: '/delete',  // 경로
+                        data: { _id: postNo },  // 요청보낼 때 삭제할 게시물 번호를 함께 전송
+                    }).done((result) => {    // 요청이 성공했을 때
+                        console.log('성공했습니다~');
+                        nowButton.parent('div').fadeOut();  // 새로고침 없이 스무스하게 사라진다
+                    }).fail((xhr, textStatus, errorThrown) => {   // 요청이 실패했을 때
+                        console.log(xhr, textStatus, errorThrown);
+                    });
+                })
+            </script>
 </body>
 
 </html>
